@@ -1,6 +1,8 @@
 package dom;
 
-public abstract class Node
-{
+import java.util.ArrayList;
+
+public abstract class Node {
+    ArrayList<Node> children;
 
 }

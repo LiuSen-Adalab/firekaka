@@ -1,6 +1,12 @@
 package dom;
 
-public class TextNode extends Node
-{
+import java.util.ArrayList;
+
+public class TextNode extends Node {
+
+    public TextNode() {
+        children = new ArrayList<>();
+    }
+
 
 }
