@@ -4,19 +4,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ElementNode extends Node {
-    String tagName;
-    HashMap<String, String> AttrMap;
+
 
     public ElementNode() {
-        AttrMap = new HashMap<>();
+        attrMap = new HashMap<>();
     }
 
-    public ElementNode(String name){
-        tagName = name;
+    public ElementNode(String tagName){
+        attrMap = new HashMap<>();
+        this.tagName = tagName;
     }
 
-    public ElementNode(String name, ArrayList<Node> children){
-        this.children = children;
-        tagName = name;
+    // utils
+    public void addChild(Node child){
+        children.add(child);
     }
+
+    public ElementNode getChild(int index) {
+        return (ElementNode) children.get(index);
+    }
+
+    public ArrayList<Node> getChildren() {
+        return children;
+    }
+    public void addAttr(String key, String value){
+        attrMap.put(key, value);
+    }
+
+
+
 }
