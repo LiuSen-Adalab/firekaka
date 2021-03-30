@@ -38,10 +38,10 @@ public class DeclareBlock {
         selectors.forEach(new BiConsumer<String, CSSSelector>() {
             @Override
             public void accept(String s, CSSSelector selector) {
-                buffer.append(selector.getName()).append(",");
+                buffer.append(selector.getName()).append(", ");
             }
         });
-        buffer.delete(buffer.length() - 1, buffer.length());
+        buffer.delete(buffer.length() - 2, buffer.length());
 
         buffer.append(" {\n");
 

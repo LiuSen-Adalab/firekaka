@@ -47,7 +47,7 @@ public class CSSParser {
         String[] selectors = selectorsStr.split(",");
         DeclareBlock declaration = new DeclareBlock();
         for (String select : selectors) {
-            CSSSelector selector = new CSSSelector(select);
+            CSSSelector selector = new CSSSelector(select.trim());
             selector.addDeclare(declaration);
             stylesheet.addSelector(selector);
         }
