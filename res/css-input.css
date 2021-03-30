@@ -1,5 +1,3 @@
 h1, h2, h3 { margin: auto; color: #cc0000; }
 div.note { margin-bottom: 20px; padding: 10px; }
-#answer,    1 { display: none; }
-div note{}
-
+#answer { display: none; }

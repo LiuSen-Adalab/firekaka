@@ -23,7 +23,7 @@ public class Stylesheet {
         for (CSSSelector selector : selectors) {
             buffer.append(selector.toString());
         }
-//        buffer.delete(buffer.length() - 1, buffer.length());
+        buffer.delete(buffer.length() - 1, buffer.length());
         return buffer.toString();
     }
 }
