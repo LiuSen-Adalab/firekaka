@@ -22,10 +22,9 @@ public class Stylesheet {
             @Override
             public void accept(String s, CSSSelector selector) {
                 buffer.append(selector.toString());
-//                buffer.append("\n");
             }
         });
-//        buffer.delete(buffer.length() - 1, buffer.length());
+        buffer.delete(buffer.length() - 1, buffer.length());
         return buffer.toString();
     }
 }
