@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.function.BiConsumer;
 
-public class CssDeclare {
+public class DeclareBlock {
 
     LinkedHashMap<String, String> declarations;
     HashMap<String, CSSSelector> selectors;
     boolean hasOutput = false;
 
-    CssDeclare(){
+    DeclareBlock(){
         declarations = new LinkedHashMap<>();
         selectors = new LinkedHashMap<>();
     }

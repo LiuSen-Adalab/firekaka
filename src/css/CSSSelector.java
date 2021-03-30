@@ -6,8 +6,8 @@ public class CSSSelector {
 
     private final String name;
     private  SelectorType type = null;
-    ArrayList<CssDeclare> declareBlocks;
-    int outputIndex = -1;
+    ArrayList<DeclareBlock> declareBlocks;
+//    int outputIndex = -1;
 
     public CSSSelector(String name) {
         this.declareBlocks = new ArrayList<>();
@@ -25,7 +25,7 @@ public class CSSSelector {
         return type;
     }
 
-    public void addDeclare(CssDeclare declare){
+    public void addDeclare(DeclareBlock declare){
         declareBlocks.add(declare);
         declare.addSelector(this);
     }

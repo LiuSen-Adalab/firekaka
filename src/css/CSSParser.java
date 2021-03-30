@@ -7,7 +7,7 @@ public class CSSParser {
 
     public Stylesheet parse(String input) {
         stylesheet = new Stylesheet();
-        char[] inputChars = input.toCharArray();
+        char[] inputChars = input.trim().toCharArray();
         decomposeInput(inputChars, 0);
 
         return stylesheet;
@@ -24,28 +24,28 @@ public class CSSParser {
             buffer.append(inputChars[index]);
             index += 1;
         }
-        CssDeclare declarationBlock = parseSelector(buffer.toString().trim());
+
+        DeclareBlock declarationBlock = parseSelector(buffer.toString().trim());
         buffer.delete(0, buffer.length());
 
+        buffer.append(inputChars[index]);
         do {
-            buffer.append(inputChars[index]);
             index += 1;
+            buffer.append(inputChars[index]);
         }
         while (inputChars[index] != '}');
-        buffer.append(inputChars[index]);
-        index +=1;
+
         buffer.delete(0, 1);
         buffer.delete(buffer.length() - 1, buffer.length());
-        buffer.delete(buffer.lastIndexOf(";"), buffer.lastIndexOf(";") + 1);
         parseDeclarations(declarationBlock, buffer.toString().trim());
 
-        decomposeInput(inputChars, index);
+        decomposeInput(inputChars, index + 1);
 
     }
 
-    private CssDeclare parseSelector(String selectorsStr) {
+    private DeclareBlock parseSelector(String selectorsStr) {
         String[] selectors = selectorsStr.split(",");
-        CssDeclare declaration = new CssDeclare();
+        DeclareBlock declaration = new DeclareBlock();
         for (String select : selectors) {
             CSSSelector selector = new CSSSelector(select);
             selector.addDeclare(declaration);
@@ -54,14 +54,18 @@ public class CSSParser {
         return declaration;
     }
 
-    private void parseDeclarations(CssDeclare block, String inputStr) {
+    private void parseDeclarations(DeclareBlock block, String inputStr) {
+        if (inputStr.length() == 0) {
+            return;
+        }
+        inputStr = inputStr.trim().substring(0, inputStr.length() - 1);
         String[] declarationsArray = inputStr.split(";");
         for (String decStr : declarationsArray) {
             String[] keyAndValue = decStr.trim().split(": ");
-            if (isNumber(keyAndValue[1])) {
-                String subStr = keyAndValue[1].substring(0, keyAndValue[1].length() - 2);
-                keyAndValue[1] = String.valueOf(Math.round(Double.parseDouble(subStr))) + "px";
-            }
+//            if (isNumber(keyAndValue[1])) {
+//                String subStr = keyAndValue[1].substring(0, keyAndValue[1].length() - 2);
+//                keyAndValue[1] = String.valueOf(Math.round(Double.parseDouble(subStr))) + "px";
+//            }
             block.addDeclare(keyAndValue[0], keyAndValue[1]);
         }
     }
