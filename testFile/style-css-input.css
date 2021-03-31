@@ -1,4 +1,7 @@
 h1, h2, h3 { margin: auto; color: #cc0000; }
 div { margin-bottom: 20px; padding: 10px; }
 #answer { display: none; }
-#main {width: mainWidth;}
+#main{color: mainColor;}
+html {color: 001;}
+div.a{width: div.aWith;}
+a {size: aSize; width: aWith;}

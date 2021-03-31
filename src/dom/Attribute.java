@@ -44,6 +44,6 @@ public class Attribute implements Comparable<Attribute> {
 
     @Override
     public int compareTo(Attribute o) {
-        return priority - o.priority;
+        return o.priority - priority;
     }
 }

@@ -1,0 +1,17 @@
+<html color="001">
+  <body>
+    <h1 margin="auto" color="#cc0000">
+      <text></text>
+    </h1>
+    <div color="mainColor" width="div.aWith" margin-bottom="20px" padding="10px">
+      <span>
+        <text></text>
+      </span>
+    </div>
+    <div margin-bottom="20px" padding="10px">
+      <span>
+        <text></text>
+      </span>
+    </div>
+  </body>
+</html>
