@@ -19,6 +19,8 @@ public class Attribute implements Comparable<Attribute> {
             priority = 10;
         } else if (type.equals("tag")) {
             priority = 1;
+        } else if (type.equals("tag_class")) {
+            priority = 11;
         }
     }
 
@@ -29,6 +31,8 @@ public class Attribute implements Comparable<Attribute> {
         } else if (type.equals("class")) {
             selectorName = buffer.insert(0, ".").toString();
         } else if (type.equals("tag")) {
+            selectorName = value;
+        } else if (type.equals("tag_class")) {
             selectorName = value;
         } else {
             selectorName = "unknown";

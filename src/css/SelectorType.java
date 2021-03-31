@@ -1,6 +1,6 @@
 package css;
 
-enum SelectorType {
+public enum SelectorType {
     id, tag, clazz, tag_clazz;
 
     public int getPriority() {

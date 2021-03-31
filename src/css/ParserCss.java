@@ -40,7 +40,6 @@ public class ParserCss {
         parseDeclarations(declarationBlock, buffer.toString().trim());
 
         decomposeInput(inputChars, index + 1);
-
     }
 
     private DeclareBlock parseSelector(String selectorsStr) {
@@ -61,22 +60,9 @@ public class ParserCss {
         inputStr = inputStr.trim().substring(0, inputStr.length() - 1);
         String[] declarationsArray = inputStr.split(";");
         for (String decStr : declarationsArray) {
-            String[] keyAndValue = decStr.trim().split(": ");
-//            if (isNumber(keyAndValue[1])) {
-//                String subStr = keyAndValue[1].substring(0, keyAndValue[1].length() - 2);
-//                keyAndValue[1] = String.valueOf(Math.round(Double.parseDouble(subStr))) + "px";
-//            }
-            block.addDeclare(keyAndValue[0], keyAndValue[1]);
+            String[] keyAndValue = decStr.trim().split(":");
+            block.addDeclare(keyAndValue[0].trim(), keyAndValue[1].trim());
         }
-    }
-
-    private boolean isNumber(String str){
-        try {
-            new BigDecimal(str.substring(0, str.length() - 3));
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
 
 }

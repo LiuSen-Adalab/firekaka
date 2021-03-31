@@ -29,9 +29,16 @@ public class ElementNode extends Node {
         addAttrToList(key,value);
     }
 
-    public void addAttrToList(String key, String value) {
-        Attribute attribute = new Attribute(key, value);
-        attributeArray.add(attribute);
+    public void addAttrToList(String type, String value) {
+        if (type.equals("class")) {
+            String[] values = value.split(" ");
+            for (String subValue : values) {
+                attributeArray.add(new Attribute("class", subValue));
+                attributeArray.add(new Attribute("tag_class", tagName + "." + subValue));
+            }
+        }else {
+            attributeArray.add(new Attribute(type, value));
+        }
     }
 
     public ArrayList<Attribute> getSortedAttrArray() {

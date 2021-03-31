@@ -12,7 +12,7 @@ import java.util.function.BiConsumer;
 public class StyledNode {
     HashMap<String, String> declarations;
     ArrayList<StyledNode> children;
-    
+
     String name;
     Stylesheet stylesheet;
 
@@ -44,20 +44,14 @@ public class StyledNode {
         }
     }
 
-    public String declarationsToString() {
-        StringBuffer buffer = new StringBuffer();
+    public void appendDeclarations(StringBuffer buffer) {
         declarations.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String property, String value) {
-                buffer.append(property).append("=");
-                buffer.append("\"").append(value).append("\" ");
+                buffer.append(" ").append(property).append("=");
+                buffer.append("\"").append(value).append("\"");
             }
         });
-        if (buffer.length() > 0) {
-            buffer.delete(buffer.length() - 1, buffer.length());
-        }
-
-        return buffer.toString();
     }
 
     @Override
@@ -76,7 +70,8 @@ public class StyledNode {
             return;
         } else {
             buffer.append("<").append(name);
-            buffer.append(" ").append(declarationsToString()).append(">\n");
+            appendDeclarations(buffer);
+            buffer.append(">\n");
         }
         for (StyledNode child : children) {
             child.buildString(buffer, level + 1);
