@@ -35,7 +35,7 @@ public class Attribute implements Comparable<Attribute> {
         } else if (type.equals("tag_class")) {
             selectorName = value;
         } else {
-            selectorName = "unknown";
+            selectorName = "%unknown";
         }
 
         return selectorName;
@@ -44,6 +44,6 @@ public class Attribute implements Comparable<Attribute> {
 
     @Override
     public int compareTo(Attribute o) {
-        return o.priority - priority;
+        return priority - o.priority ;
     }
 }

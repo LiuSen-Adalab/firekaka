@@ -4,9 +4,7 @@ import css.Stylesheet;
 import dom.Attribute;
 import dom.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class StyledNode {
@@ -34,13 +32,29 @@ public class StyledNode {
 
     private void addStylesToStyleNode(Node domNode) {
         ArrayList<Attribute> attrs = domNode.getSortedAttrArray();
+        ArrayList<HashMap<String, String>> outputReverseOrder = new ArrayList<>();
+        outputReverseOrder.add(new HashMap<>());
         if (attrs != null) {
             for (Attribute attr : attrs) {
                 HashMap<String, String> allDeclarationsOfAttr = stylesheet.getDeclarations(attr.getSelectorName());
                 if (allDeclarationsOfAttr != null) {
-                    declarations.putAll(allDeclarationsOfAttr);
+                    allDeclarationsOfAttr.forEach(new BiConsumer<String, String>() {
+                        @Override
+                        public void accept(String s, String s2) {
+                            outputReverseOrder.get(outputReverseOrder.size() -1).remove(s);
+                        }
+                    });
+                    outputReverseOrder.add(allDeclarationsOfAttr);
                 }
             }
+        }
+        for (int i = outputReverseOrder.size() - 1; i > 0; i--) {
+            outputReverseOrder.get(i).forEach(new BiConsumer<String, String>() {
+                @Override
+                public void accept(String s, String s2) {
+                    declarations.put(s, s2);
+                }
+            });
         }
     }
 
