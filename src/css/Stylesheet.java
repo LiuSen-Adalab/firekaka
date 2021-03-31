@@ -3,6 +3,7 @@ package css;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.function.BiConsumer;
 
 public class Stylesheet {
 
@@ -28,8 +29,15 @@ public class Stylesheet {
             return;
         }
         for (Selector selector : selectors) {
-            mergedDeclarations.get(selector.getName())
-                    .putAll(selector.getDeclareBlock().getDeclarations());
+//            mergedDeclarations.get(selector.getName())
+//                    .putAll(selector.getDeclareBlock().getDeclarations());
+            selector.getDeclareBlock().getDeclarations().forEach(new BiConsumer<String, String>() {
+                @Override
+                public void accept(String s, String s2) {
+                    mergedDeclarations.get(selector.getName()).remove(s);
+                    mergedDeclarations.get(selector.getName()).put(s, s2);
+                }
+            });
         }
         collected =true;
     }
