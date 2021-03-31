@@ -2,7 +2,7 @@ package css;
 
 import java.math.BigDecimal;
 
-public class CSSParser {
+public class ParserCss {
     private Stylesheet stylesheet;
 
     public Stylesheet parse(String input) {
@@ -47,8 +47,8 @@ public class CSSParser {
         String[] selectors = selectorsStr.split(",");
         DeclareBlock declaration = new DeclareBlock();
         for (String select : selectors) {
-            CSSSelector selector = new CSSSelector(select.trim());
-            selector.addDeclare(declaration);
+            Selector selector = new Selector(select.trim());
+            selector.setDeclareBlock(declaration);
             stylesheet.addSelector(selector);
         }
         return declaration;

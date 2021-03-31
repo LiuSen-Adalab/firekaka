@@ -6,8 +6,8 @@ import java.util.function.BiConsumer;
 
 public class DeclareBlock {
 
-    LinkedHashMap<String, String> declarations;
-    HashMap<String, CSSSelector> selectors;
+    private final LinkedHashMap<String, String> declarations;
+    HashMap<String, Selector> selectors;
     boolean hasOutput = false;
 
     DeclareBlock(){
@@ -23,9 +23,10 @@ public class DeclareBlock {
         declarations.put(property, value);
     }
 
-    public void addSelector(CSSSelector selector){
+    public void addSelector(Selector selector){
         selectors.put(selector.getName(), selector);
     }
+
 
 
     @Override
@@ -35,9 +36,9 @@ public class DeclareBlock {
         }
 
         StringBuffer buffer = new StringBuffer();
-        selectors.forEach(new BiConsumer<String, CSSSelector>() {
+        selectors.forEach(new BiConsumer<String, Selector>() {
             @Override
-            public void accept(String s, CSSSelector selector) {
+            public void accept(String s, Selector selector) {
                 buffer.append(selector.getName()).append(", ");
             }
         });

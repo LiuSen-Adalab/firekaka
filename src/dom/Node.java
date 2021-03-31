@@ -1,13 +1,22 @@
 package dom;
 
+import css.Selector;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.function.BiConsumer;
 
 public abstract class Node {
     ArrayList<Node> children = new ArrayList<>();
     String tagName;
-    HashMap<String, String> attrMap;
+    HashMap<String, String> attributes;
+    ArrayList<Attribute> attributeArray;
+
+
+    public ArrayList<Node> getChildren() {
+        return children;
+    }
 
     @Override
     public String toString() {
@@ -17,29 +26,38 @@ public abstract class Node {
         return buffer.toString();
     }
 
-    private void buildString(StringBuffer buffer, int level) {
-        if (this.tagName == null) {
-            buffer.delete(buffer.length() - 1, buffer.length());
-            buffer.append(((TextNode) this).text);
-            return;
-        }
-        addBlank(buffer, level);
-        buffer.append("<").append(this.tagName);
-        addAttr(buffer);
-        buffer.append(">\n");
+    public void buildString(StringBuffer buffer, int level) {
+        writeTagHead(buffer, level);  // write tag head
+        writeChildren(buffer, level); // write children recursively
+        writeTagTail(buffer, level);  // write tag tail
+    }
 
-        for (Node child : children) {
-            child.buildString(buffer, level + 1);
-        }
-
-        if (buffer.lastIndexOf("\n") == buffer.length() - 1) {
-            addBlank(buffer, level);
+    private void writeTagTail(StringBuffer buffer, int level) {
+        if (isElementNode(buffer)) {
+            appendBlank(buffer, level);
         }
         buffer.append("</").append(tagName).append(">\n");
     }
 
-    private void addAttr(StringBuffer buffer) {
-        this.attrMap.forEach(new BiConsumer<String, String>() {
+    private boolean isElementNode(StringBuffer buffer){
+        return buffer.lastIndexOf("\n") == buffer.length() - 1;
+    }
+
+    private void writeChildren(StringBuffer buffer, int level) {
+        for (Node child : children) {
+            child.buildString(buffer, level + 1);
+        }
+    }
+
+    private void writeTagHead(StringBuffer buffer, int level) {
+        appendBlank(buffer, level);
+        buffer.append("<").append(this.tagName);
+        appendAttr(buffer);
+        buffer.append(">\n");
+    }
+
+    private void appendAttr(StringBuffer buffer) {
+        attributes.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
                 buffer.append(" ").append(String.format("%s=\"%s\"", s, s2));
@@ -47,11 +65,15 @@ public abstract class Node {
         });
     }
 
-
-    private void addBlank(StringBuffer buffer, int level) {
+    private void appendBlank(StringBuffer buffer, int level) {
         for (int i = 0; i < level; i++) {
             buffer.append("  ");
         }
     }
 
+    public abstract ArrayList<Attribute> getSortedAttrArray();
+
+    public String getTagName() {
+        return tagName;
+    }
 }

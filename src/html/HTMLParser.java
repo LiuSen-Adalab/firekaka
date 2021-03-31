@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 public class HTMLParser {
     HashMap<Integer, ElementNode> parentNodes = new HashMap<>();
     String input;
-    private String abc;
 
     public Node parse(String input) {
         this.input = input;
@@ -21,54 +20,55 @@ public class HTMLParser {
         Pattern leftPattern = Pattern.compile(leftReg);
         Pattern rightPattern = Pattern.compile(rightReg);
 
-        Matcher preLeftMatcher = leftPattern.matcher(input);
         Matcher leftMatcher = leftPattern.matcher(input);
         Matcher rightMatcher = rightPattern.matcher(input);
 
+        rightMatcher.find();
+        parentNodes.put(0, new ElementNode());
 
-        finder(preLeftMatcher, leftMatcher, rightMatcher, 0);
+        buildDomTree(leftMatcher, rightMatcher, 0);
 
         return parentNodes.get(1);
     }
 
-    private void finder(Matcher preLeft, Matcher left, Matcher right, int curLevel) {
-        right.find();
-        if (left.find()) {
-            ElementNode root = new ElementNode();
-            parentNodes.put(0, root);
+    private void buildDomTree(Matcher left, Matcher right, int lastLevel) {
+        if (!left.find()) {
+            return;
         }
-        while (preLeft.find()) {
-            int continuousRightCount = -1;
-            while (preLeft.start() > right.start()) {
-                right.find();
-                continuousRightCount += 1;
-            }
-            curLevel -= continuousRightCount;
+        int curLevel = getLevel(left, right, lastLevel);     // 获取当前读取节点的等级
+        ElementNode node = setupNode(left, curLevel);        // 建立当前节点，并将自己加入父节点的子列表中
+        setAttr(node, left.start(), left.end());             // 设置节点的属性
+        findTextNode(node, left);                            // 寻找当前节点是否包含文字节点
 
-            ElementNode node = new ElementNode(preLeft.group(1));
-            parentNodes.put(curLevel, node);
-            parentNodes.get(curLevel - 1).addChild(node);
+        buildDomTree(left, right, curLevel);                 // 递归搜索输入字符串，建立节点
+    }
 
-            setAttr(node, preLeft.start(), preLeft.end());
-            if (left.find()) {
-                findTextNode(node, preLeft.end(), left.start());
-            }else {
-                findTextNode(node, preLeft.end(), input.length() - 1);
-            }
+    private void findTextNode(ElementNode node, Matcher left) {
+        String textReg = left.group(0) + "(.+?)" + "</";
+        Pattern textPattern = Pattern.compile(textReg);
+        Matcher textMatcher = textPattern.matcher(input);
 
+        if (textMatcher.find(left.start())) {
+            TextNode textNode = new TextNode(textMatcher.group(1));
+            node.addChild(textNode);
         }
     }
 
-    private void findTextNode(ElementNode node, int start, int end) {
-        String text = input.substring(start-1, end);
-        String textReg = ">(.+?)</";
-        Pattern textPattern = Pattern.compile(textReg);
-        Matcher textMatcher = textPattern.matcher(text);
+    private ElementNode setupNode(Matcher left, int curLevel) {
+        ElementNode node = new ElementNode(left.group(1));
+        parentNodes.put(curLevel, node);
+        parentNodes.get(curLevel - 1).addChild(node);
+        return node;
+    }
 
-        if (textMatcher.find()) {
-            TextNode textNode = new TextNode(textMatcher.group(1).trim());
-            node.addChild(textNode);
+    private int getLevel(Matcher left, Matcher right, int lastLevel) {
+        int count = 0;
+        while (right.start() < left.start()) {
+            right.find();
+            count += 1;
         }
+
+        return lastLevel - count + 1;
     }
 
     private void setAttr(ElementNode node, int start, int end) {
