@@ -21,17 +21,6 @@ public class Stylesheet {
     }
 
 
-    public void mergeSameNameSelectors() {
-        mergedSelectors = new HashMap<>();
-        for (int i = 0; i < selectors.size(); i++) {
-            for (int j = i + 1; j < selectors.size(); j++) {
-                if (selectors.get(i).getName().equals(selectors.get(j).getName())){
-                    merge(selectors.get(i), selectors.get(j));
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();

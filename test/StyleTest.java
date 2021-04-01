@@ -12,9 +12,9 @@ import java.util.LinkedHashMap;
 
 public class StyleTest {
     public static void main(String[] args) throws IOException {
-        String htmlInput = Files.readString(Path.of("testFile/style-html-input.html"), StandardCharsets.UTF_8);
-        String cssInput = Files.readString(Path.of("testFile/style-css-input.css"), StandardCharsets.UTF_8);
-        String expectedOutput = Files.readString(Path.of("testFile/style-output.xml"), StandardCharsets.UTF_8);
+        String htmlInput = Files.readString(Path.of("res/style-html-input.html"), StandardCharsets.UTF_8);
+        String cssInput = Files.readString(Path.of("res/style-css-input.css"), StandardCharsets.UTF_8);
+        String expectedOutput = Files.readString(Path.of("res/style-output.xml"), StandardCharsets.UTF_8);
 
         HTMLParser htmlParser = new HTMLParser();
         Node domNode = htmlParser.parse(htmlInput);
