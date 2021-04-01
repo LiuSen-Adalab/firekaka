@@ -58,9 +58,9 @@ public class StyledNode {
     }
 
     /*
-    * **************************************************************************
-    * toString
-    * ***************************************************************************/
+     * **************************************************************************
+     * toString
+     * ***************************************************************************/
     @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer();
@@ -93,7 +93,8 @@ public class StyledNode {
     private void appendTagHead(StringBuffer buffer, int level) {
         addIndent(buffer, level);
         buffer.append("<").append(name);
-        buffer.append(allDeclarationToString()).append(">\n");
+        appendDeclarations(buffer);
+        buffer.append(">\n");
     }
 
     private void appendChildren(StringBuffer buffer, int level) {
@@ -108,9 +109,9 @@ public class StyledNode {
     }
 
     /*
-    * **********************************************************************
-    * style parser
-    * ***********************************************************************/
+     * **********************************************************************
+     * style parser
+     * ***********************************************************************/
 
     /**
      * 判断选择器是否能匹配当前节点
@@ -161,17 +162,10 @@ public class StyledNode {
      * @return 返回当前节点的所有CSS规则，并格式化为一行，以空格分隔
      * (如果长度不为0，则字符串最前面带一个空格）
      */
-    private String allDeclarationToString() {
-        StringBuffer buffer = new StringBuffer();
+    private void appendDeclarations(StringBuffer buffer) {
         HashMap<String, String> mergedDeclarations =
                 mergeAllBlock(getAllMatchSelector());
 
-        formatDeclarationString(buffer, mergedDeclarations);
-
-        return buffer.toString();
-    }
-
-    private void formatDeclarationString(StringBuffer buffer, HashMap<String, String> mergedDeclarations) {
         mergedDeclarations.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
@@ -181,12 +175,26 @@ public class StyledNode {
         });
     }
 
+
     /**
      * 合并传入的所有selector的所有declarations，按优先级从高到低和出现先后顺序排列
+     *
      * @return declarations 的 linkedHashMap
      */
     private HashMap<String, String> mergeAllBlock(ArrayList<Selector> selectors) {
         HashMap<String, String> declarations = new LinkedHashMap<>();
+        for (int i = 0; i < selectors.size() - 1; i++) {
+            if (selectors.get(i).getPriority() == selectors.get(i + 1).getPriority()) {
+                DeclareBlock block1 = selectors.get(i).getDeclareBlock();
+                DeclareBlock block2 = selectors.get(i + 1).getDeclareBlock();
+                block2.getDeclarations().forEach(new BiConsumer<String, String>() {
+                    @Override
+                    public void accept(String s, String s2) {
+                        block1.getDeclarations().remove(s);
+                    }
+                });
+            }
+        }
         for (Selector selector : selectors) {
             mergeDeclarations(declarations, selector.getDeclareBlock());
         }
@@ -204,7 +212,7 @@ public class StyledNode {
     }
 
     /**
-     * @return 返回匹配当前节点的所有selector，并且列表按selector优先级从高到低排序
+     * @return 返回匹配当前节点的所有selector，列表按selector优先级从高到低排序
      */
     private ArrayList<Selector> getAllMatchSelector() {
         ArrayList<Selector> matchedSelectors = new ArrayList<>();
@@ -215,7 +223,7 @@ public class StyledNode {
                 matchedSelectors.add(selector);
             }
         }
-        Collections.sort(matchedSelectors);     // 只按优先级排序
+        Collections.sort(matchedSelectors);     // 按优先级和出现顺序排列
         return matchedSelectors;
     }
 

@@ -1,4 +1,5 @@
 h2{width:h2Width;}
+h2{width:h2newWidth;}
 h1, h2, h3 { margin: auto; color: #cc0000; }
 #main{}
 div.a{color:div.aColor; width:div.aWidth;}

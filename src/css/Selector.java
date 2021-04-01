@@ -43,4 +43,8 @@ public class Selector implements Comparable<Selector>{
     public void setDeclarationBlock(DeclareBlock block) {
         this.declareBlock = block;
     }
+
+    public int getPriority() {
+        return priority;
+    }
 }
