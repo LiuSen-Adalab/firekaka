@@ -1,13 +1,14 @@
 package dom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TextNode extends Node {
     String text;
 
     public TextNode(){
-
     }
+
     public TextNode(String text){
         this.text = text;
     }

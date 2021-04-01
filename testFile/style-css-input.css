@@ -1,3 +1,4 @@
+.h1Class {color:h1ClasColor;}
 h1, h2, h3 { margin: auto; color: #cc0000; }
 h1 {color:tagColor; h1new : h1jjj;}
 div { margin-bottom: 20px; padding: 10px; }
@@ -5,6 +6,7 @@ div { margin-bottom: 20px; padding: 10px; }
 #main {width: idWidth;}
 div.a{width: Tag_classWidth;}
 html{color: 001;}
+h1 {margin:h1new;}
 div.a{height:div.aHeight;}
 .a {position:classPosition; height1:.aClassHeight;}
 span{ color:textColor;}

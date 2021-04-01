@@ -8,49 +8,29 @@ import java.util.function.BiConsumer;
 public class Stylesheet {
 
     private final ArrayList<Selector> selectors;
-    private final HashMap<String, HashMap<String, String>> mergedDeclarations;
-    boolean collected;
+    private ArrayList<DeclareBlock> blocks;
+    private HashMap<String, Selector> mergedSelectors;
 
     public Stylesheet() {
         selectors = new ArrayList<>();
-        mergedDeclarations = new LinkedHashMap<>();
+        blocks = new ArrayList<>();
     }
 
-    public void addSelector(Selector selector) {
-        selectors.add(selector);
-        mergedDeclarations.put(selector.getName(), new LinkedHashMap<>());
+    public void addBlock(DeclareBlock block) {
+        blocks.add(block);
     }
 
-    /**
-     * 收集所有选择器的所有css规则，同名的选择器会合并其规则
-     */
-    private void collectAllDeclarations() {
-        if (collected){
-            return;
-        }
-        for (Selector selector : selectors) {
-//            mergedDeclarations.get(selector.getName())
-//                    .putAll(selector.getDeclareBlock().getDeclarations());
-            selector.getDeclareBlock().getDeclarations().forEach(new BiConsumer<String, String>() {
-                @Override
-                public void accept(String s, String s2) {
-                    mergedDeclarations.get(selector.getName()).remove(s);
-                    mergedDeclarations.get(selector.getName()).put(s, s2);
+
+    public void mergeSameNameSelectors() {
+        mergedSelectors = new HashMap<>();
+        for (int i = 0; i < selectors.size(); i++) {
+            for (int j = i + 1; j < selectors.size(); j++) {
+                if (selectors.get(i).getName().equals(selectors.get(j).getName())){
+                    merge(selectors.get(i), selectors.get(j));
                 }
-            });
+            }
         }
-        collected =true;
     }
-
-    /**
-     * @param selectorName 选择器的名字
-     * @return 该同名选择器的所有规则
-     */
-    public HashMap<String, String> getDeclarations(String selectorName){
-        collectAllDeclarations();
-        return mergedDeclarations.get(selectorName);
-    }
-
 
     @Override
     public String toString() {
@@ -60,5 +40,13 @@ public class Stylesheet {
         }
         buffer.delete(buffer.length() - 1, buffer.length());
         return buffer.toString();
+    }
+
+    public ArrayList<Selector> getSelectors() {
+        return selectors;
+    }
+
+    public void addSelector(Selector selector) {
+        selectors.add(selector);
     }
 }

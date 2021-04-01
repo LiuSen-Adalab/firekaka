@@ -13,9 +13,15 @@ public abstract class Node {
     HashMap<String, String> attributes;
     ArrayList<Attribute> attributeArray;
 
-
+    public Node() {
+        attributes = new LinkedHashMap<>();
+    }
     public ArrayList<Node> getChildren() {
         return children;
+    }
+
+    public HashMap<String, String> getAttributes() {
+        return attributes;
     }
 
     @Override

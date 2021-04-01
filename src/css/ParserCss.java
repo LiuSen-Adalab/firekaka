@@ -1,69 +1,59 @@
 package css;
 
-import java.math.BigDecimal;
-
 public class ParserCss {
     private Stylesheet stylesheet;
 
     public Stylesheet parse(String input) {
         stylesheet = new Stylesheet();
-        char[] inputChars = input.trim().toCharArray();
-        decomposeInput(inputChars, 0);
-
+        parseAllBlock(input);
         return stylesheet;
     }
 
 
-    private void decomposeInput(char[] inputChars, int index) {
-        if (index == inputChars.length) {
-            return;
+    private void parseAllBlock(String input) {
+        String[] bigBlocks = cutIntoSelectorAndBlock(input);
+        for (String bigBlock : bigBlocks) {
+            parseBlock(bigBlock);
         }
-
-        StringBuffer buffer = new StringBuffer();
-        while (inputChars[index] != '{') {
-            buffer.append(inputChars[index]);
-            index += 1;
-        }
-
-        DeclareBlock declarationBlock = parseSelector(buffer.toString().trim());
-        buffer.delete(0, buffer.length());
-
-        buffer.append(inputChars[index]);
-        do {
-            index += 1;
-            buffer.append(inputChars[index]);
-        }
-        while (inputChars[index] != '}');
-
-        buffer.delete(0, 1);
-        buffer.delete(buffer.length() - 1, buffer.length());
-        parseDeclarations(declarationBlock, buffer.toString().trim());
-
-        decomposeInput(inputChars, index + 1);
     }
 
-    private DeclareBlock parseSelector(String selectorsStr) {
+    private void parseBlock(String bigBlock){
+        String[] separatedBlock = bigBlock.split("\\{");
+        DeclareBlock block = buildSelectors(separatedBlock[0]);
+        buildDeclarationBlock(block, separatedBlock[1]);
+    }
+
+    private void buildDeclarationBlock(DeclareBlock block, String input) {
+        String[] declarations = getDeclarationBlock(input);
+        for (String declaration : declarations) {
+            String[] d = declaration.split(":");
+            block.addDeclare(d[0].trim(), d[1].trim());
+        }
+        stylesheet.addBlock(block);
+    }
+
+
+    private DeclareBlock buildSelectors(String selectorsStr) {
         String[] selectors = selectorsStr.split(",");
-        DeclareBlock declaration = new DeclareBlock();
-        for (String select : selectors) {
-            Selector selector = new Selector(select.trim());
-            selector.setDeclareBlock(declaration);
+        DeclareBlock block = new DeclareBlock();
+        for (String selectorName : selectors) {
+            Selector selector = new Selector(selectorName.trim());
+            selector.setDeclarationBlock(block);
+            block.addSelector(selector);
             stylesheet.addSelector(selector);
         }
-        return declaration;
+        return block;
     }
 
-    private void parseDeclarations(DeclareBlock block, String inputStr) {
-        if (inputStr.length() == 0) {
-            return;
-        }
-        inputStr = inputStr.trim().substring(0, inputStr.length() - 1);
-        String[] declarationsArray = inputStr.split(";");
-        for (String decStr : declarationsArray) {
-            String[] keyAndValue = decStr.trim().split(":");
-            block.addDeclare(keyAndValue[0].trim(), keyAndValue[1].trim());
-        }
+
+    private String[] cutIntoSelectorAndBlock(String input) {
+        input = input.trim().substring(0, input.trim().length() - 1);
+        return input.split("}");
     }
 
+    private String[] getDeclarationBlock(String declarations) {
+        declarations = declarations.trim().substring(0, declarations.trim().length() - 1);
+        return declarations.split(";");
+    }
 }
 
