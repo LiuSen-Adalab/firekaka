@@ -143,7 +143,7 @@ public class StyledNode {
     }
 
     /**
-     * 合并传入的所有selector的所有declaratioformatDeclarationStringns，按优先级从高到低和出现先后顺序排列
+     * 合并传入的所有selector的所有declarations，按优先级从低到高和出现先后顺序排列
      * @return declarations 的 linkedHashMap
      */
     private HashMap<String, String> mergeAllBlock(ArrayList<Selector> selectors) {
@@ -161,6 +161,7 @@ public class StyledNode {
                 declarations.putIfAbsent(s, s2);
             }
         });
+
     }
 
     /**
@@ -175,7 +176,6 @@ public class StyledNode {
                 matchedSelectors.add(selector);
             }
         }
-        Collections.reverse(matchedSelectors);  //为了确保后出现的同名选择器可以在排序操作排在前面，要先反转列表
         Collections.sort(matchedSelectors);     // 只按优先级排序
         return matchedSelectors;
     }

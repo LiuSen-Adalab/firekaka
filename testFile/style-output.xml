@@ -1,15 +1,10 @@
-<html color="001">
+<html>
   <body>
-    <h1 margin="h1new" color="tagColor">
+    <h1 margin="auto" color="#cc0000">
       <text></text>
     </h1>
-    <div width="idWidth" height="div.aHeight" position="classPosition" margin-bottom="20px" padding="10px">
-      <span color="textColor">
-        <text></text>
-      </span>
-    </div>
-    <div margin-bottom="20px" padding="10px">
-      <span color="textColor">
+    <div width=".a.testWidth" color="mainColor" height=".aHeight" margin-bottom="19px" padding="10px">
+      <span>
         <text></text>
       </span>
     </div>
