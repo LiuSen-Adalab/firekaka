@@ -1,5 +1,6 @@
+h2{width:h2Width;}
 h1, h2, h3 { margin: auto; color: #cc0000; }
-#main{color:mainColor;}
+#main{}
 div.a{color:div.aColor; width:div.aWidth;}
 div.test.test{width:test.testWidth;}
 div.test{color:div.testColor; width:div.testWidth;}
@@ -8,5 +9,5 @@ div.a.test#main{width: .a.testWidth;}
 .a {height:.aHeight;}
 
 div { margin-bottom: 20px; padding: 10px; }
-div {color:divColor; gg: gg}
+div {color:divColor; gg: gg;}
 #answer { display: none; }

@@ -19,8 +19,10 @@ public class ParserCss {
 
     private void parseBlock(String bigBlock){
         String[] separatedBlock = bigBlock.split("\\{");
-        DeclareBlock block = buildSelectors(separatedBlock[0]);
-        buildDeclarationBlock(block, separatedBlock[1]);
+            DeclareBlock block = buildSelectors(separatedBlock[0]);
+        if (separatedBlock.length > 1) {
+            buildDeclarationBlock(block, separatedBlock[1]);
+        }
     }
 
     private void buildDeclarationBlock(DeclareBlock block, String input) {

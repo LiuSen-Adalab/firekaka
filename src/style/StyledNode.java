@@ -9,40 +9,24 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class StyledNode {
-    HashMap<String, String> attributes;
-    ArrayList<StyledNode> children;
-    HashMap<String, String> selectorNameOfThisNode;
+    ArrayList<StyledNode> children;      // 子节点
+    private HashMap<String, String> allSelectorNameOfThisNode; // 当前节点的所有基本选择器名字，为查询方便用map
 
     String name;
     Stylesheet stylesheet;
-    private HashMap<String, String> allSelectorNameOfThisNode;
-
 
     public StyledNode(Node domNode, Stylesheet stylesheet) {
-        attributes = new LinkedHashMap<>();
-        selectorNameOfThisNode = new HashMap<>();
-        attributes.putAll(domNode.getAttributes());
         children = new ArrayList<>();
         this.stylesheet = stylesheet;
         this.name = domNode.getTagName();
-
-        allSelectorNameOfThisNode = getAllSimpleSelectorName();
+        setSelectorNames(domNode);
         buildTree(domNode);
     }
 
-    public void setAttributes(HashMap<String, String> attributesOfDOMNode) {
-        attributesOfDOMNode.forEach(new BiConsumer<String, String>() {
-            @Override
-            public void accept(String s, String s2) {
-                if (s.equals("class")) {
-                    String[] classes = s2.split(" ");
-                    for (String aClass : classes) {
-                        attributes.put(s, aClass);
-                    }
-                }
-            }
-        });
+    private void setSelectorNames(Node domNode) {
+        allSelectorNameOfThisNode = getAllSimpleSelectorName(domNode.getAttributes());
     }
+
 
     private void buildTree(Node domNode) {
         for (Node child : domNode.getChildren()) {
@@ -50,6 +34,83 @@ public class StyledNode {
         }
     }
 
+
+    /**
+     * @return 当前节点的所有基本选择器名字，包括标签名（带前缀符号，如“＃id”）
+     */
+    private HashMap<String, String> getAllSimpleSelectorName(HashMap<String, String> attributes) {
+        HashMap<String, String> selectorNames = new HashMap<>();
+        attributes.forEach(new BiConsumer<String, String>() {
+            @Override
+            public void accept(String type, String s2) {
+                if (type.equals("class")) {
+                    String[] classes = s2.split(" ");
+                    for (String aClass : classes) {
+                        selectorNames.put(transformToSelectorName(type, aClass), type);
+                    }
+                } else {
+                    selectorNames.put(transformToSelectorName(type, s2), type);
+                }
+            }
+        });
+        selectorNames.put(name, "tag");
+        return selectorNames;
+    }
+
+    /*
+    * **************************************************************************
+    * toString
+    * ***************************************************************************/
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buildString(buffer, 0);
+
+        return buffer.toString();
+    }
+
+    private void buildString(StringBuffer buffer, int level) {
+        if (!isTestNode(buffer, level)) {
+            appendTagHead(buffer, level);
+            appendChildren(buffer, level);
+            appendTagTail(buffer, level);
+        }
+    }
+    /*
+     * ***************************************************************
+     * toString helper function
+     * ****************************************************************/
+
+    private boolean isTestNode(StringBuffer buffer, int level) {
+        if (name == null) {
+            addIndent(buffer, level);
+            buffer.append("<text></text>\n");
+            return true;
+        }
+        return false;
+    }
+
+    private void appendTagHead(StringBuffer buffer, int level) {
+        addIndent(buffer, level);
+        buffer.append("<").append(name);
+        buffer.append(allDeclarationToString()).append(">\n");
+    }
+
+    private void appendChildren(StringBuffer buffer, int level) {
+        for (StyledNode child : children) {
+            child.buildString(buffer, level + 1);
+        }
+    }
+
+    private void appendTagTail(StringBuffer buffer, int level) {
+        addIndent(buffer, level);
+        buffer.append("</").append(name).append(">\n");
+    }
+
+    /*
+    * **********************************************************************
+    * style parser
+    * ***********************************************************************/
 
     /**
      * 判断选择器是否能匹配当前节点
@@ -64,29 +125,6 @@ public class StyledNode {
         return true;
     }
 
-    /**
-     * @return 当前节点的所有基本选择器名字，包括标签名（带前缀符号，如“＃id”）
-     */
-    private HashMap<String, String> getAllSimpleSelectorName() {
-        HashMap<String, String> selectorNames = new HashMap<>();
-        attributes.forEach(new BiConsumer<String, String>() {
-            @Override
-            public void accept(String type, String s2) {
-                if (type.equals("class")) {
-                    String[] classes = s2.split(" ");
-                    for (String aClass : classes) {
-                        selectorNames.put(transformToSelectorName(type, aClass), type);
-                    }
-                }else {
-                    selectorNames.put(transformToSelectorName(type, s2), type);
-                }
-            }
-        });
-        selectorNames.put(name, "tag");
-        return selectorNames;
-    }
-
-
 
     private String transformToSelectorName(String type, String value) {
         if (type.equals("class")) {
@@ -100,6 +138,7 @@ public class StyledNode {
 
     /**
      * 切分一个组合的选择器
+     *
      * @param selector 从StyleSheet得到的selector
      * @return 切分的选择器的名字列表
      */
@@ -143,7 +182,7 @@ public class StyledNode {
     }
 
     /**
-     * 合并传入的所有selector的所有declarations，按优先级从低到高和出现先后顺序排列
+     * 合并传入的所有selector的所有declarations，按优先级从高到低和出现先后顺序排列
      * @return declarations 的 linkedHashMap
      */
     private HashMap<String, String> mergeAllBlock(ArrayList<Selector> selectors) {
@@ -170,7 +209,7 @@ public class StyledNode {
     private ArrayList<Selector> getAllMatchSelector() {
         ArrayList<Selector> matchedSelectors = new ArrayList<>();
         ArrayList<Selector> selectorsInSheet = stylesheet.getSelectors();
-        int appear = 0;
+
         for (Selector selector : selectorsInSheet) {
             if (isMatchThisNode(selector)) {
                 matchedSelectors.add(selector);
@@ -178,42 +217,6 @@ public class StyledNode {
         }
         Collections.sort(matchedSelectors);     // 只按优先级排序
         return matchedSelectors;
-    }
-
-    @Override
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buildString(buffer, 0);
-
-        return buffer.toString();
-    }
-
-    private void buildString(StringBuffer buffer, int level) {
-        if (name == null) {
-            addIndent(buffer, level);
-            buffer.append("<text></text>\n");
-            return;
-        }
-        appendTagHead(buffer, level);
-        appendChildren(buffer, level);
-        appendTagTail(buffer, level);
-    }
-
-    private void appendTagTail(StringBuffer buffer, int level) {
-        addIndent(buffer, level);
-        buffer.append("</").append(name).append(">\n");
-    }
-
-    private void appendChildren(StringBuffer buffer, int level) {
-        for (StyledNode child : children) {
-            child.buildString(buffer, level + 1);
-        }
-    }
-
-    private void appendTagHead(StringBuffer buffer, int level) {
-        addIndent(buffer, level);
-        buffer.append("<").append(name);
-        buffer.append(allDeclarationToString()).append(">\n");
     }
 
     private void addIndent(StringBuffer buffer, int level) {
