@@ -9,10 +9,11 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 public class StyledNode {
-    ArrayList<StyledNode> children;      // 子节点
+    ArrayList<StyledNode> children;      // 所有子节点
     private HashMap<String, String> allSelectorNameOfThisNode; // 当前节点的所有基本选择器名字，为查询方便用map
+    private HashMap<String, String> mergedDeclarations;  // 节点的所有规则
 
-    String name;
+    String name;        // 与tagName相同
     Stylesheet stylesheet;
 
     public StyledNode(Node domNode, Stylesheet stylesheet) {
@@ -27,6 +28,9 @@ public class StyledNode {
         allSelectorNameOfThisNode = getAllSimpleSelectorName(domNode.getAttributes());
     }
 
+    public HashMap<String, String> getMergedDeclarations() {
+        return mergedDeclarations;
+    }
 
     private void buildTree(Node domNode) {
         for (Node child : domNode.getChildren()) {
@@ -55,6 +59,10 @@ public class StyledNode {
         });
         selectorNames.put(name, "tag");
         return selectorNames;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /*
@@ -159,12 +167,12 @@ public class StyledNode {
 
 
     /**
-     * @return 返回当前节点的所有CSS规则，并格式化为一行，以空格分隔
+     * 增加当前节点的所有CSS规则，并格式化为一行，以空格分隔
      * (如果长度不为0，则字符串最前面带一个空格）
      */
     private void appendDeclarations(StringBuffer buffer) {
-        HashMap<String, String> mergedDeclarations =
-                mergeAllBlock(getAllMatchSelector());
+        // 所有规则
+        mergedDeclarations = mergeAllBlock(getAllMatchSelector());
 
         mergedDeclarations.forEach(new BiConsumer<String, String>() {
             @Override
@@ -231,6 +239,10 @@ public class StyledNode {
         for (int i = 0; i < level; i++) {
             buffer.append("  ");
         }
+    }
+
+    public ArrayList<StyledNode> getChildren() {
+        return children;
     }
 }
 
