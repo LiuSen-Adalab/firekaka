@@ -20,7 +20,9 @@ public class StyledNode {
         children = new ArrayList<>();
         this.stylesheet = stylesheet;
         this.name = domNode.getTagName();
+
         setSelectorNames(domNode);
+        setMergedDeclarations();
         buildTree(domNode);
     }
 
@@ -36,6 +38,10 @@ public class StyledNode {
         for (Node child : domNode.getChildren()) {
             children.add(new StyledNode(child, stylesheet));
         }
+    }
+
+    private void setMergedDeclarations() {
+        mergedDeclarations = mergeAllMatchBlock(getAllMatchSelector());
     }
 
 
@@ -69,13 +75,13 @@ public class StyledNode {
      * **************************************************************************
      * toString
      * ***************************************************************************/
-    @Override
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buildString(buffer, 0);
-
-        return buffer.toString();
-    }
+//    @Override
+//    public String toString() {
+//        StringBuffer buffer = new StringBuffer();
+//        buildString(buffer, 0);
+//
+//        return buffer.toString();
+//    }
 
     private void buildString(StringBuffer buffer, int level) {
         if (!isTestNode(buffer, level)) {
@@ -172,8 +178,6 @@ public class StyledNode {
      */
     private void appendDeclarations(StringBuffer buffer) {
         // 所有规则
-        mergedDeclarations = mergeAllBlock(getAllMatchSelector());
-
         mergedDeclarations.forEach(new BiConsumer<String, String>() {
             @Override
             public void accept(String s, String s2) {
@@ -184,12 +188,14 @@ public class StyledNode {
     }
 
 
+
+
     /**
      * 合并传入的所有selector的所有declarations，按优先级从高到低和出现先后顺序排列
      *
      * @return declarations 的 linkedHashMap
      */
-    private HashMap<String, String> mergeAllBlock(ArrayList<Selector> selectors) {
+    private HashMap<String, String> mergeAllMatchBlock(ArrayList<Selector> selectors) {
         HashMap<String, String> declarations = new LinkedHashMap<>();
         for (int i = 0; i < selectors.size() - 1; i++) {
             if (selectors.get(i).getPriority() == selectors.get(i + 1).getPriority()) {
