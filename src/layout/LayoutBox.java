@@ -61,7 +61,7 @@ public class LayoutBox {
     private void parseRules() {
         padding = findRule("padding");
         margin = findRule("margin");
-        borderWidth = findRule("border-width");
+        borderWidth = findRule("border");
     }
 
     private int findRule(String property) {
