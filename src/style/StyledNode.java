@@ -42,14 +42,14 @@ public class StyledNode {
         HashMap<String, String> selectorNames = new HashMap<>();
         attributes.forEach(new BiConsumer<String, String>() {
             @Override
-            public void accept(String type, String s2) {
+            public void accept(String type, String selectorName) {
                 if (type.equals("class")) {
-                    String[] classes = s2.split(" ");
+                    String[] classes = selectorName.split(" ");
                     for (String aClass : classes) {
                         selectorNames.put(transformToSelectorName(type, aClass), type);
                     }
                 } else {
-                    selectorNames.put(transformToSelectorName(type, s2), type);
+                    selectorNames.put(transformToSelectorName(type, selectorName), type);
                 }
             }
         });

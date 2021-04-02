@@ -1,4 +1,4 @@
-import css.ParserCss;
+import css.CSSParser;
 import css.Stylesheet;
 import dom.Node;
 import html.HTMLParser;
@@ -21,8 +21,8 @@ public class StyleTest {
         HTMLParser htmlParser = new HTMLParser();
         Node domNode = htmlParser.parse(htmlInput);
 
-        ParserCss parserCss = new ParserCss();
-        Stylesheet stylesheet = parserCss.parse(cssInput);
+        CSSParser CSSParser = new CSSParser();
+        Stylesheet stylesheet = CSSParser.parse(cssInput);
 
         StyledNode root = new StyledNode(domNode, stylesheet);
         String output = root.toString();

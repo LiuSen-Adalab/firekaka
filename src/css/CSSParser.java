@@ -1,6 +1,6 @@
 package css;
 
-public class ParserCss {
+public class CSSParser {
     private Stylesheet stylesheet;
 
     public Stylesheet parse(String input) {
