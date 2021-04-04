@@ -110,12 +110,13 @@ public class LayoutBox {
     public void layoutTree(int viewPOrtWidth) {
         parent.contentWidth = viewPOrtWidth;
 
-        computeContentWidth();
-        computeContentHeight();
+
         computeLayout();
     }
 
     private void computeLayout() {
+        computeContentWidth();
+        computeContentHeight();
         computeBorderX();
         computeContentY();
         for (LayoutBox child : children) {
@@ -187,6 +188,9 @@ public class LayoutBox {
                 widthProperty.right = 0;
             }
         }
+        if (contentWidth == auto){
+            contentWidth = 0;
+        }
     }
 
     private int makeEqual() {
@@ -225,9 +229,9 @@ public class LayoutBox {
         for (LayoutBox child : children) {
             child.computeContentHeight();
             contentHeight += child.contentHeight +
-                    child.padding.simple * 2 +
-                    child.border.simple * 2 +
-                    child.margin.simple * 2;
+                    child.padding.top  + child.padding.bottom+
+                    child.border.top + child.border.bottom+
+                    child.margin.top + child.margin.bottom;
         }
 
         String height = rules.get("height");
