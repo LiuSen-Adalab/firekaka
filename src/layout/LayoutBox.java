@@ -7,8 +7,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class LayoutBox {
-    int contentWidth, contentHeight, padding, margin, borderWidth;
+    Padding padding;
+    Border border;
+    Margin margin;
+    int auto = 99999;
+    int contentWidth = auto, contentHeight;
     int borderX, contentY;
+
+    ArrayList<Dimension> widthProperties;
     ArrayList<LayoutBox> children;
     HashMap<String, String> rules;
 
@@ -30,15 +36,26 @@ public class LayoutBox {
     private LayoutBox() {
         children = new ArrayList<>();
         rules = new LinkedHashMap<>();
+        widthProperties = new ArrayList<>();
+        addWidthProperties();
     }
 
     public LayoutBox(StyledNode styledRoot, LayoutBox parent) {
         this();
         this.name = styledRoot.getName();
         this.parent = parent;
-        computeContentWidth();
         buildTree(styledRoot);
     }
+
+    private void addWidthProperties() {
+        margin = new Margin();
+        border = new Border();
+        padding = new Padding();
+        widthProperties.add(margin);
+        widthProperties.add(border);
+        widthProperties.add(padding);
+    }
+
 
     private void buildTree(StyledNode styledRoot) {
         buildThisNode(styledRoot);
@@ -55,23 +72,36 @@ public class LayoutBox {
 
     private void buildThisNode(StyledNode styledRoot) {
         rules.putAll(styledRoot.getMergedDeclarations());
-        parseRules();
+        setValueOfProperties();
     }
 
-    private void parseRules() {
-        padding = findRule("padding");
-        margin = findRule("margin");
-        borderWidth = findRule("border");
-    }
-
-    private int findRule(String property) {
-        if (rules.get(property) != null) {
-            String a = rules.get(property);
-            String b = a.substring(0, a.length() - 2);
-            return Integer.parseInt(b);
+    private void setValueOfProperties() {
+        for (Dimension widthProperty : widthProperties) {
+            setValueOfProperties(widthProperty);
         }
-        return 0;
+        String width = rules.get("width");
+        if (width != null) {
+            if (width.contains("px")) {
+                String sub = width.substring(0, width.length() - 2);
+                contentWidth = Integer.parseInt(sub);
+            }
+        }
     }
+
+
+
+
+    private void setValueOfProperties(Dimension widthProperty) {
+        String simpleValue = rules.get(widthProperty.getSimpleName());
+        String leftValue = rules.get(widthProperty.getLeftName());
+        String rightValue = rules.get(widthProperty.getRightName());
+        String topValue = rules.get(widthProperty.getTopName());
+        String bottomValue = rules.get(widthProperty.getBottomName());
+
+        widthProperty.setValues(simpleValue, leftValue, rightValue);
+        widthProperty.setTopAndBottomValues(simpleValue, topValue, bottomValue);
+    }
+
 
     /******************************************************************************
      * compute layout of the tree
@@ -80,6 +110,7 @@ public class LayoutBox {
     public void layoutTree(int viewPOrtWidth) {
         parent.contentWidth = viewPOrtWidth;
 
+        computeContentWidth();
         computeContentHeight();
         computeLayout();
     }
@@ -93,13 +124,13 @@ public class LayoutBox {
     }
 
     private void computeBorderX() {
-        borderX = parent.borderX + parent.padding + margin;
+        borderX = parent.borderX + parent.border.left + parent.padding.left + margin.left;
     }
 
     private void computeContentY() {
         LayoutBox preSibling = getPreSibling();
-        contentY += parent.contentY + margin + borderWidth + padding
-        + preSibling.contentHeight  + preSibling.borderWidth+ preSibling.margin;
+        contentY += parent.contentY + margin.top + border.top + padding.top
+                + preSibling.contentHeight +preSibling.padding.bottom+ preSibling.border.bottom + preSibling.margin.bottom;
     }
 
     private LayoutBox getPreSibling() {
@@ -108,7 +139,7 @@ public class LayoutBox {
             return parent.children.get(me - 1);
         }
         LayoutBox pre = new LayoutBox();
-        pre.contentY = parent.contentY + parent.padding;
+
         return pre;
     }
 
@@ -117,8 +148,76 @@ public class LayoutBox {
      * 计算当前盒子的 contentWidth
      */
     private void computeContentWidth() {
-        contentWidth = parent.contentWidth - padding * 2 - margin * 2 - borderWidth * 2;
+        if (isOverFlow()) {
+            if (contentWidth != auto && !margin.leftEqualAuto() && !margin.rightEqualAuto()) {
+                margin.right = makeEqual();
+            } else if (contentWidth != auto && margin.leftEqualAuto() && !margin.rightEqualAuto()) {
+                margin.left = makeEqual();
+            } else if (contentWidth != auto && !margin.leftEqualAuto() && margin.rightEqualAuto()) {
+                margin.right = makeEqual();
+            } else if (contentWidth != auto && margin.leftEqualAuto() && margin.rightEqualAuto()) {
+                margin.left = makeEqual();
+                margin.setRight(margin.left / 2);
+                margin.setLeft(margin.right);
+            } else if (contentWidth == auto) {
+                if (margin.rightEqualAuto()) {
+                    margin.setRight(0);
+                }
+                if (margin.leftEqualAuto()) {
+                    margin.setLeft(0);
+                }
+                if (isOverFlow()) {
+                    contentWidth = 0;
+                    if (isOverFlow()) {
+                        margin.right = makeEqual();
+                    } else {
+                        contentWidth = makeEqual();
+                    }
+                }
+
+            }
+
+        }
+
+        // 清空auto
+        for (Dimension widthProperty : widthProperties) {
+            if (widthProperty.leftEqualAuto()) {
+                widthProperty.left = 0;
+            }
+            if (widthProperty.rightEqualAuto()) {
+                widthProperty.right = 0;
+            }
+        }
     }
+
+    private int makeEqual() {
+        int total = getTotalWidth();
+        return parent.contentWidth - total;
+    }
+
+    // 上溢
+    private boolean isOverFlow() {
+        int totalWidth = getTotalWidth();
+
+        return totalWidth > parent.contentWidth;
+    }
+
+    private int getTotalWidth() {
+        int totalWidth = 0;
+        for (Dimension widthProperty : widthProperties) {
+            if (!widthProperty.leftEqualAuto()) {
+                totalWidth += widthProperty.left;
+            }
+            if (!widthProperty.rightEqualAuto()) {
+                totalWidth += widthProperty.right;
+            }
+        }
+        if (contentWidth != auto) {
+            totalWidth += contentWidth;
+        }
+        return totalWidth;
+    }
+
 
     /**
      * 计算当前盒子的 contentHeight
@@ -127,9 +226,17 @@ public class LayoutBox {
         for (LayoutBox child : children) {
             child.computeContentHeight();
             contentHeight += child.contentHeight +
-                    child.padding * 2 +
-                    child.borderWidth * 2 +
-                    child.margin * 2;
+                    child.padding.simple * 2 +
+                    child.border.simple * 2 +
+                    child.margin.simple * 2;
+        }
+
+        String height = rules.get("height");
+        if (height != null) {
+            if (height.contains("px")) {
+                String sub = height.substring(0, height.length() - 2);
+                contentHeight = Integer.parseInt(sub);
+            }
         }
     }
 
@@ -179,8 +286,6 @@ public class LayoutBox {
     }
 
     private void appendIndentTo(StringBuffer buffer, int level) {
-        for (int i = 0; i < level; i++) {
-            buffer.append("  ");
-        }
+        buffer.append("  ".repeat(Math.max(0, level)));
     }
 }
