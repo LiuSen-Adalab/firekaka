@@ -12,12 +12,12 @@ import java.nio.file.Path;
 
 public class LayoutTest {
     public static void main(String[] args) throws IOException {
-//        String htmlInput = Files.readString(Path.of("res/layout-html-input.html"), StandardCharsets.UTF_8);
-//        String cssInput = Files.readString(Path.of("res/layout-css-input.css"), StandardCharsets.UTF_8);
-//        String expectedOutput = Files.readString(Path.of("res/layout-output.xml"), StandardCharsets.UTF_8);
-        String htmlInput = Files.readString(Path.of("testFile/layout-html-input.html"), StandardCharsets.UTF_8);
-        String cssInput = Files.readString(Path.of("testFile/layout-css-input.css"), StandardCharsets.UTF_8);
-        String expectedOutput = Files.readString(Path.of("testFile/layout-output.xml"), StandardCharsets.UTF_8);
+        String htmlInput = Files.readString(Path.of("res/layout-html-input.html"), StandardCharsets.UTF_8);
+        String cssInput = Files.readString(Path.of("res/layout-css-input.css"), StandardCharsets.UTF_8);
+        String expectedOutput = Files.readString(Path.of("res/layout-output.xml"), StandardCharsets.UTF_8);
+//        String htmlInput = Files.readString(Path.of("testFile/layout-html-input.html"), StandardCharsets.UTF_8);
+//        String cssInput = Files.readString(Path.of("testFile/layout-css-input.css"), StandardCharsets.UTF_8);
+//        String expectedOutput = Files.readString(Path.of("testFile/layout-output.xml"), StandardCharsets.UTF_8);
 
         HTMLParser htmlParser = new HTMLParser();
         Node domNode = htmlParser.parse(htmlInput);
