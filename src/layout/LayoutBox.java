@@ -167,11 +167,10 @@ public class LayoutBox {
                     margin.setLeft(0);
                 }
                 if (isOverFlow()) {
-                    contentWidth = 0;
-                    if (isOverFlow()) {
+                    contentWidth = makeEqual();
+                    if (contentWidth < 0){
+                        contentWidth = 0;
                         margin.right = makeEqual();
-                    } else {
-                        contentWidth = makeEqual();
                     }
                 }
 
@@ -195,11 +194,11 @@ public class LayoutBox {
         return parent.contentWidth - total;
     }
 
-    // 上溢
+    // 上下溢
     private boolean isOverFlow() {
         int totalWidth = getTotalWidth();
 
-        return totalWidth > parent.contentWidth;
+        return totalWidth != parent.contentWidth;
     }
 
     private int getTotalWidth() {

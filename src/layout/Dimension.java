@@ -32,6 +32,7 @@ public abstract class Dimension {
         if (bottom != null) {
             this.bottom = toPx(bottom);
         }
+
         if (this.top == auto){
             this.top = 0;
         }
