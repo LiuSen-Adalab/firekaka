@@ -130,9 +130,13 @@ public class LayoutBox {
 
     private void computeContentY() {
         LayoutBox preSibling = getPreSibling();
-        contentY += parent.contentY + margin.top + border.top + padding.top
-                + preSibling.contentHeight +preSibling.padding.bottom+ preSibling.border.bottom
-                + preSibling.margin.bottom + preSibling.padding.top + preSibling.border.top + preSibling.margin.top;
+        if (preSibling == null) {
+            contentY = parent.contentY + margin.top + border.top + padding.top;
+        }else {
+            contentY = preSibling.contentY + preSibling.contentHeight + preSibling.padding.bottom
+                    + preSibling.border.bottom + preSibling.margin.bottom
+                    + margin.top + border.top + padding.top;
+        }
     }
 
     private LayoutBox getPreSibling() {
@@ -140,9 +144,8 @@ public class LayoutBox {
         if (me > 0) {
             return parent.children.get(me - 1);
         }
-        LayoutBox pre = new LayoutBox();
 
-        return pre;
+        return null;
     }
 
 
