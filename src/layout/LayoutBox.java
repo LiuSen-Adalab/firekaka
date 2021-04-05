@@ -110,13 +110,13 @@ public class LayoutBox {
     public void layoutTree(int viewPOrtWidth) {
         parent.contentWidth = viewPOrtWidth;
 
-
+        computeContentHeight();
         computeLayout();
     }
 
     private void computeLayout() {
         computeContentWidth();
-        computeContentHeight();
+
         computeBorderX();
         computeContentY();
         for (LayoutBox child : children) {
@@ -290,5 +290,70 @@ public class LayoutBox {
 
     private void appendIndentTo(StringBuffer buffer, int level) {
         buffer.append("  ".repeat(Math.max(0, level)));
+    }
+
+
+    /*********************************************************
+     *
+     *********************************************************/
+    public HashMap<String, String> getRules() {
+        return rules;
+    }
+
+    public int getContentX(){
+        return borderX + border.left;
+    }
+
+    public int getContentY(){
+        return contentY;
+    }
+
+    public int getBorderX() {
+        return borderX;
+    }
+
+    public int getBorderY(){
+        return contentY - padding.top - border.top;
+    }
+
+    public int getBorderBoxWidth(){
+        return contentWidth + border.left + border.right + padding.left + padding.right;
+    }
+
+    public int getBorderBoxHeight(){
+        return contentHeight + border.top + border.bottom + padding.top + padding.bottom;
+    }
+
+    public Border getBorder() {
+        return border;
+    }
+
+
+    public int getBorderTop(){
+        return border.top;
+    }
+
+    public int getBorderBottom(){
+        return border.bottom;
+    }
+
+    public int getBorderLeft(){
+        return border.left;
+    }
+
+    public int getBorderRight(){
+        return border.right;
+    }
+
+    public int getPaddingBoxWidth(){
+        return contentWidth + padding.left + padding.right;
+    }
+
+    public int getPaddingBoxHeight(){
+        return contentHeight + padding.top + padding.bottom;
+    }
+
+    public ArrayList<LayoutBox> getChildren() {
+        return children;
     }
 }

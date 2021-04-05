@@ -10,5 +10,11 @@ public class Border extends Dimension{
         bottomName = "border-bottom-width";
     }
 
+    public int getTop(){
+        return top;
+    }
 
+    public int getBottom(){
+        return bottom;
+    }
 }
