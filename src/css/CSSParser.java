@@ -2,6 +2,15 @@ package css;
 
 public class CSSParser {
     private Stylesheet stylesheet;
+    String input;
+
+    public CSSParser(String css) {
+        this.input = css;
+    }
+
+    public CSSParser() {
+
+    }
 
     public Stylesheet parse(String input) {
         stylesheet = new Stylesheet();
@@ -56,6 +65,10 @@ public class CSSParser {
     private String[] getDeclarationBlock(String declarations) {
         declarations = declarations.trim().substring(0, declarations.trim().length() - 1);
         return declarations.split(";");
+    }
+
+    public Stylesheet parse() {
+        return parse(input);
     }
 }
 

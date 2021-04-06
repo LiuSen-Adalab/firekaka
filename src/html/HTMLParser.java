@@ -12,6 +12,18 @@ public class HTMLParser {
     HashMap<Integer, ElementNode> parentNodes = new HashMap<>();
     String input;
 
+    public HTMLParser(String html) {
+        input = html;
+    }
+
+    public Node parse() {
+        return parse(input);
+    }
+
+    public HTMLParser(){
+
+    }
+
     public Node parse(String input) {
         this.input = input;
         String leftReg = "<(\\w+?)\\b.*?>";
@@ -82,4 +94,6 @@ public class HTMLParser {
             node.addAttr(attrMatcher.group(1), attrMatcher.group(2));
         }
     }
+
+
 }
