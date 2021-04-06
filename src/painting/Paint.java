@@ -30,11 +30,11 @@ public class Paint {
 
         execute(graphics);
 
-        try {
-            ImageIO.write(image, "jpg", new File("./abc.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            ImageIO.write(image, "jpg", new File("./abc.jpg"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         return image;
     }
@@ -49,10 +49,7 @@ public class Paint {
     }
 
     private void generateContentCommand(LayoutBox box){
-        String display = box.getRules().get("display");
-        if (display != null && display.equals("none")) {
-            return;
-        }
+
         DisplayCommand command = new DisplayCommand();
         String background = box.getRules().get("background");
         if (background != null){
@@ -77,10 +74,10 @@ public class Paint {
 
 
     private void borderCommand(LayoutBox box){
-        String display = box.getRules().get("display");
-        if (display != null && display.equals("none")) {
-            return;
-        }
+//        String display = box.getRules().get("display");
+//        if (display != null && display.equals("none")) {
+//            return;
+//        }
         String borderColor = box.getRules().get("border-color");
         if (borderColor != null){
             DisplayCommand topCommand = new DisplayCommand();

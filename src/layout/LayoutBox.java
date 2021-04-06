@@ -65,7 +65,11 @@ public class LayoutBox {
     private void buildChildren(StyledNode styledRoot) {
         for (StyledNode styleChild : styledRoot.getChildren()) {
             if (styleChild.getName() != null) {
-                children.add(new LayoutBox(styleChild, this));
+                LayoutBox child = new LayoutBox(styleChild, this);
+                String display = child.getRules().get("display");
+                if (display != null && !display.equals("none")) {
+                    children.add(child);
+                }
             }
         }
     }
@@ -86,6 +90,7 @@ public class LayoutBox {
                 contentWidth = Integer.parseInt(sub);
             }
         }
+
     }
 
 
