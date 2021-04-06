@@ -45,9 +45,14 @@ public class Paint {
         for (LayoutBox child : box.getChildren()) {
             generateCommands(child);
         }
+
     }
 
     private void generateContentCommand(LayoutBox box){
+        String display = box.getRules().get("display");
+        if (display != null && display.equals("none")) {
+            return;
+        }
         DisplayCommand command = new DisplayCommand();
         String background = box.getRules().get("background");
         if (background != null){
@@ -72,6 +77,10 @@ public class Paint {
 
 
     private void borderCommand(LayoutBox box){
+        String display = box.getRules().get("display");
+        if (display != null && display.equals("none")) {
+            return;
+        }
         String borderColor = box.getRules().get("border-color");
         if (borderColor != null){
             DisplayCommand topCommand = new DisplayCommand();

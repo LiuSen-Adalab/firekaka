@@ -24,15 +24,19 @@ public class PaintingTest {
 
         HTMLParser htmlParser = new HTMLParser();
         Node domNode = htmlParser.parse(htmlInput);
+        System.out.println(domNode);
 
         CSSParser cssParser = new CSSParser();
         Stylesheet stylesheet = cssParser.parse(cssInput);
+        System.out.println(stylesheet);
 
         StyledNode styledRoot = new StyledNode(domNode, stylesheet);
+        System.out.println(styledRoot);
         LayoutBox layoutBoxRoot = new LayoutBox(styledRoot);
 
         // 根据窗口宽度计算
         layoutBoxRoot.layoutTree(CANVAS_WIDTH);
+        System.out.println(layoutBoxRoot);
 
         Paint paint = new Paint();
         BufferedImage image = paint.paint(layoutBoxRoot, CANVAS_WIDTH, CANVAS_HEIGHT);

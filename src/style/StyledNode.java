@@ -75,13 +75,13 @@ public class StyledNode {
      * **************************************************************************
      * toString
      * ***************************************************************************/
-//    @Override
-//    public String toString() {
-//        StringBuffer buffer = new StringBuffer();
-//        buildString(buffer, 0);
-//
-//        return buffer.toString();
-//    }
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buildString(buffer, 0);
+
+        return buffer.toString();
+    }
 
     private void buildString(StringBuffer buffer, int level) {
         if (!isTestNode(buffer, level)) {
