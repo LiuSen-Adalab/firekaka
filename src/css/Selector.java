@@ -24,6 +24,9 @@ public class Selector implements Comparable<Selector>{
         if (!classCount[0].equals("") && !idCount[0].equals("")) {
             priority += 1;
         }
+        if (name.equals("*")) {
+            priority = 0;
+        }
     }
 
     public DeclareBlock getDeclareBlock() {

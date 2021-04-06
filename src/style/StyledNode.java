@@ -132,6 +132,9 @@ public class StyledNode {
      */
     private boolean isMatchThisNode(Selector selector) {
         String[] splitSelectorNames = splitSelector(selector);
+        if (selector.getName().equals("*")) {
+            return true;
+        }
         for (String splitSelectorName : splitSelectorNames) {
             if (allSelectorNameOfThisNode.get(splitSelectorName) == null) {
                 return false;

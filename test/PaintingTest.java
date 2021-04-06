@@ -19,8 +19,8 @@ public class PaintingTest {
     private static final int CANVAS_HEIGHT = 600;
 
     public static void main(String[] args) throws IOException {
-        String htmlInput = Files.readString(Path.of("res/paint-html-input.html"), StandardCharsets.UTF_8);
-        String cssInput = Files.readString(Path.of("res/paint-css-input.css"), StandardCharsets.UTF_8);
+        String htmlInput = Files.readString(Path.of("testFile/paint-html-input.html"), StandardCharsets.UTF_8);
+        String cssInput = Files.readString(Path.of("testFile/paint-css-input.css"), StandardCharsets.UTF_8);
 
         HTMLParser htmlParser = new HTMLParser();
         Node domNode = htmlParser.parse(htmlInput);
@@ -36,7 +36,7 @@ public class PaintingTest {
 
         Paint paint = new Paint();
         BufferedImage image = paint.paint(layoutBoxRoot, CANVAS_WIDTH, CANVAS_HEIGHT);
-        BufferedImage expectedImage = ImageIO.read(new File("res/paint-test.png"));
+        BufferedImage expectedImage = ImageIO.read(new File("testFile/paint-test.png"));
 
         assert identicalImage(image, expectedImage);
     }
